@@ -2,6 +2,43 @@
 
 This repository contains the analysis source code used in the paper ["Leveraging uncertainty in machine learning accelerates biological discovery and design"](https://www.cell.com/cell-systems/fulltext/S2405-4712(20)30364-1) by Brian Hie, Bryan Bryson, and Bonnie Berger (Cell Systems, 2020).
 
+
+### SLG Notes 
+
+
+Installing: 
+
+conda create --name hie python=3.6 tensorflow-gpu=1.15
+pip install -r requirements.txt
+
+
+#### Engaging 
+
+
+Getting an interactive session:
+
+
+`srun -N 1 -n 1 --gres=gpu:1 --time=1:00:00 --partition=sched_mit_ccoley --constraint=centos7 --mem-per-cpu=100000 --pty bash -in`
+
+conda env: 
+
+`conda activate hie`
+
+Debugging this on MLMP `python bin/train_davis2011kinase.py mlper1 --seed $i >> train_davis2011kinase_mlper1.log`
+
+Running with normalization: `CUDA_VISIBLE_DEVICES="" python bin/train_davis2011kinase.py mlper1norm`
+
+
+
+Running on SLURM: `python slurm_scripts/run_cv.py`
+
+
+Making plots: 
+`python bin/plot_benchmark_cv.py`
+
+
+
+
 ### Data
 
 You can download the relevant datasets using the commands

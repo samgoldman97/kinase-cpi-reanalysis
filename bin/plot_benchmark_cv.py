@@ -2,6 +2,7 @@ from utils import plt
 
 import pandas as pd
 import seaborn as sns
+import re
 
 def parse_log(model, fname):
     data = []
@@ -15,7 +16,9 @@ def parse_log(model, fname):
 
     with open(fname) as f:
         for line in f:
-            if not (line.startswith('2019-') or line.startswith('2020-')):
+
+            starts_with_year = re.search(r"^20[0-9][0-9]-", line)
+            if starts_with_year is None:
                 continue
             if ' | ' not in line or ' for ' not in line:
                 continue
@@ -74,14 +77,18 @@ def parse_log_dgraphdta(model, fname):
     return data
 
 if __name__ == '__main__':
+
     models = [
-        'gp',
-        'hybrid',
-        'bayesnn',
-        'mlper5g',
         'mlper1',
-        'cmf',
-        'dgraphdta'
+        'mlper1norm',
+        'hybrid'
+        #'gp',
+        #'hybrid',
+        #'bayesnn',
+        #'mlper5g',
+        #'mlper1',
+        #'cmf',
+        #'dgraphdta'
     ]
 
     data = []
@@ -94,6 +101,7 @@ if __name__ == '__main__':
         else:
             fname = 'target/log/train_davis2011kinase_{}.log'.format(model)
             data += parse_log(model, fname)
+
 
     df = pd.DataFrame(data, columns=[
         'model', 'metric', 'quadrant', 'value', 'uncertainty',
@@ -110,8 +118,9 @@ if __name__ == '__main__':
 
             plt.figure()
             sns.barplot(x='model', y='value', data=df_subset, ci=None,
-                        order=models, hue='uncertainty', dodge=False,
-                        palette=sns.color_palette("RdBu", n_colors=8))
+                        order=models, hue='model', dodge=False,
+                        palette=sns.color_palette("Reds_r", 
+                                                  n_colors=len(models)))
             sns.swarmplot(x='model', y='value', data=df_subset, color='black',
                           order=models)
             if (metric == 'Pearson rho' or metric == 'Spearman r') \
@@ -119,6 +128,8 @@ if __name__ == '__main__':
                 plt.ylim([ -0.05, 0.7 ])
             if metric == 'MSE' and quadrant != 'unknown_all':
                 plt.ylim([ -0.01e7, 3e7 ])
-            plt.savefig('figures/benchmark_cv_{}_{}.svg'
+            #plt.savefig('figures/benchmark_cv_{}_{}.svg'
+            #            .format(metric, quadrant))
+            plt.savefig('figures/benchmark_cv_{}_{}.png'
                         .format(metric, quadrant))
             plt.close()

@@ -9,8 +9,8 @@ from sklearn.metrics import mean_squared_error as mse
 import sys
 
 def mlp_ensemble(n_neurons=500, n_regressors=5, n_epochs=100,
-                 n_hidden_layers=2, loss='mse', seed=1,
-                 verbose=True,):
+                 n_hidden_layers=2, loss='mse', seed=1, 
+                 normalize=False, verbose=True,):
     from mlp_ensemble import MLPEnsembleRegressor
 
     layer_sizes_list = []
@@ -26,6 +26,7 @@ def mlp_ensemble(n_neurons=500, n_regressors=5, n_epochs=100,
         batch_sizes=500,
         max_iters=n_epochs,
         momentums=0.9,
+        normalize=normalize,
         nesterovs_momentums=True,
         backend='keras',
         random_state=seed,
@@ -83,6 +84,15 @@ def train(regress_type='hybrid', seed=1, **kwargs):
             n_epochs=50,
             seed=seed,
         )
+    elif regress_type == 'mlper1norm':
+        regressor = mlp_ensemble(
+            n_neurons=200,
+            n_regressors=1,
+            normalize=True,
+            n_epochs=50,
+            seed=seed,
+        )
+
     elif regress_type == 'dmlper1':
         regressor = mlp_ensemble(
             n_neurons=1000,

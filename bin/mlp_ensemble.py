@@ -3,6 +3,7 @@ import numpy as np
 import tensorflow as tf
 import keras.backend as K
 from keras.activations import softplus
+from sklearn.preprocessing import StandardScaler
 
 from utils import tprint
 
@@ -35,6 +36,7 @@ class MLPEnsembleRegressor(object):
                  momentums=0.9,
                  nesterovs_momentums=True,
                  backend='keras',
+                 normalize=False,
                  random_state=1,
                  verbose=False,
     ):
@@ -98,6 +100,11 @@ class MLPEnsembleRegressor(object):
         else:
             self.nesterovs_momentums_ = [ nesterovs_momentums ] * self.n_regressors_
 
+        # Define scalers
+        self.normalize = normalize
+        if self.normalize: 
+            self.scaler = False
+
     def _create_models(self, X, y):
         if len(y.shape) == 1:
             n_outputs = 1
@@ -157,6 +164,10 @@ class MLPEnsembleRegressor(object):
 
     def fit(self, X, y):
         y = y.flatten()
+        self.scaler = StandardScaler()
+        y = self.scaler.fit_transform(y.reshape(-1,1)).flatten()
+
+
         if len(y) != X.shape[0]:
             raise ValueError('Data has {} samples and {} labels.'
                              .format(X.shape[0], len(y)))
@@ -183,7 +194,9 @@ class MLPEnsembleRegressor(object):
         return self
 
     def predict(self, X):
+
         pred = np.array([ model.predict(X) for model in self.models_ ])
+
         assert(pred.shape[0] == self.n_regressors_)
         assert(pred.shape[1] == X.shape[0])
 
@@ -199,6 +212,9 @@ class MLPEnsembleRegressor(object):
             ).mean(0) - np.power(ys, 2)
             self.multi_predict_ = pred_mean.T
 
+            if self.normalize: 
+                raise NotImplementedError("Normalization not implemented for Gaussian NLL loss")
+
             return ys
 
         elif self.loss_ == 'mse':
@@ -206,4 +222,9 @@ class MLPEnsembleRegressor(object):
 
             self.uncertainties_ = pred.var(0).flatten()
             self.multi_predict_ = pred[:, :, 0].T
-            return pred.mean(0).flatten()
+            flattened = pred.mean(0).flatten()
+            if self.normalize: 
+                flattened = self.scaler.inverse_transform(
+                    flattened.reshape(-1,1).flatten()
+                )
+            return flattened
