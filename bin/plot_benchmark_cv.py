@@ -81,8 +81,13 @@ if __name__ == '__main__':
     models = [
         'mlper1',
         'mlper1norm',
+        'mlper1normsklearn',
+        'mlper1split',
+        'ridgesplit',
+        'gpsplit',
         'hybrid'
-        #'gp',
+
+        #1gp',
         #'hybrid',
         #'bayesnn',
         #'mlper5g',
@@ -116,9 +121,9 @@ if __name__ == '__main__':
             df_subset = df[(df.metric == metric) &
                            (df.quadrant == quadrant)]
 
-            plt.figure()
+            plt.figure(figsize=(20,10))
             sns.barplot(x='model', y='value', data=df_subset, ci=None,
-                        order=models, hue='model', dodge=False,
+                        order=models, hue='uncertainty', dodge=False,
                         palette=sns.color_palette("Reds_r", 
                                                   n_colors=len(models)))
             sns.swarmplot(x='model', y='value', data=df_subset, color='black',

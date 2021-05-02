@@ -186,11 +186,11 @@ def process():
     prot2feature = featurize_prots(
         'data/davis2011kinase/prot_embeddings.txt', prots
     )
+    ##  WHY is prot dimension so high??
 
     process_data = split_data(
         Kds, chems, genes, prots, chem2feature, prot2feature
     )
-
     return process_data
 
 

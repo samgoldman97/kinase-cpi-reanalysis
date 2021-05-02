@@ -10,7 +10,9 @@ import sys
 
 def mlp_ensemble(n_neurons=500, n_regressors=5, n_epochs=100,
                  n_hidden_layers=2, loss='mse', seed=1, 
-                 normalize=False, verbose=True,):
+                 normalize=False, split= False,verbose=True,
+                 backend = "keras"):
+
     from mlp_ensemble import MLPEnsembleRegressor
 
     layer_sizes_list = []
@@ -24,11 +26,12 @@ def mlp_ensemble(n_neurons=500, n_regressors=5, n_epochs=100,
         solvers='adam',
         alphas=0.1,
         batch_sizes=500,
+        split=split,
         max_iters=n_epochs,
         momentums=0.9,
         normalize=normalize,
         nesterovs_momentums=True,
-        backend='keras',
+        backend=backend,
         random_state=seed,
         verbose=verbose,
     )
@@ -92,6 +95,47 @@ def train(regress_type='hybrid', seed=1, **kwargs):
             n_epochs=50,
             seed=seed,
         )
+
+    elif regress_type == 'mlper1normsklearn':
+        regressor = mlp_ensemble(
+            n_neurons=200,
+            n_regressors=1,
+            normalize=True,
+            backend="sklearn",
+            n_epochs=50,
+            seed=seed,
+        )
+
+    elif regress_type == 'mlper1norm':
+        regressor = mlp_ensemble(
+            n_neurons=200,
+            n_regressors=1,
+            normalize=True,
+            n_epochs=50,
+            seed=seed,
+        )
+
+    elif regress_type == 'ridgesplit':
+        from sklearn_single_task import LinearSingle
+        regressor = LinearSingle()
+
+    elif regress_type == 'gpsplit':
+        from sklearn_single_task import GPSingle
+        from sklearn.gaussian_process.kernels import RBF, ConstantKernel as C
+        # NOTE: Add more jobs for parallel?
+        regressor = GPSingle(kernel=C(10000., 'fixed') * RBF(1., 'fixed'), )
+
+    elif regress_type == 'mlper1split':
+        regressor = mlp_ensemble(
+            n_neurons=200,
+            n_regressors=1,
+            split=True,
+            normalize=True,
+            n_epochs=50,
+            backend="sklearn", 
+            seed=seed,
+        )
+
 
     elif regress_type == 'dmlper1':
         regressor = mlp_ensemble(
@@ -277,7 +321,6 @@ def analyze_regressor(**kwargs):
                   regress_type, 'observed_')
 
     # Analyze unknown dataset.
-
     if regress_type == 'cmf':
         y_unk_pred = regressor.predict(kwargs['idx_unk'])
     else:

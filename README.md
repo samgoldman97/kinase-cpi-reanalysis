@@ -27,8 +27,7 @@ conda env:
 Debugging this on MLMP `python bin/train_davis2011kinase.py mlper1 --seed $i >> train_davis2011kinase_mlper1.log`
 
 Running with normalization: `CUDA_VISIBLE_DEVICES="" python bin/train_davis2011kinase.py mlper1norm`
-
-
+Running with normalization + sklearn: `CUDA_VISIBLE_DEVICES="" python bin/train_davis2011kinase.py mlper1normsklearn >> train_davis2011kinase_mlper1normsklearn.log`
 
 Running on SLURM: `python slurm_scripts/run_cv.py`
 
