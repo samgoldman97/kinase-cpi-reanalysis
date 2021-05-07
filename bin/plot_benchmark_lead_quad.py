@@ -23,7 +23,8 @@ def parse_log(model, fname):
             if not line:
                 break
 
-            if not line.startswith('2019') and not line.startswith('2020'):
+            starts_with_year = re.search(r"^20[0-9][0-9]-", line)
+            if starts_with_year is None:
                 continue
             if not ' | ' in line:
                 continue
@@ -139,7 +140,8 @@ if __name__ == '__main__':
                         palette=sns.color_palette("RdBu", n_colors=8,),
                         capsize=0.2,)
             plt.ylim([ -100, 10100 ])
-            plt.savefig('figures/benchmark_lead_{}_{}.svg'
+            #plt.savefig('figures/benchmark_lead_{}_{}.svg'
+            plt.savefig('figures/benchmark_lead_{}_{}.png'
                         .format(quadrant, n_lead))
             plt.close()
 

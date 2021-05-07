@@ -58,6 +58,8 @@ def featurize_prots(fname, prots):
 
     assert(len(set(prots) - set(prot2feature.keys())) == 0)
 
+    import pdb
+    pdb.set_trace()
     return prot2feature
 
 def expected_acquisition(y_unk, n_acq=5, n_samples=100000):
@@ -175,13 +177,19 @@ def visualize_heatmap(chem_prot, suffix=''):
         plt.savefig('figures/heatmap_{}.png'.format(suffix), dpi=300)
     plt.close()
 
-def process():
+def process(use_morgan=False):
     Kds, chems, genes, prots = load_kds('data/davis2011kinase/nbt.1990-S4.csv')
 
     visualize_heatmap(Kds, 'logKd')
 
+    if use_morgan:
+        chem_fname = 'data/davis2011kinase/chem_fingerprints.txt'
+    else:
+        chem_fname = 'data/davis2011kinase/chem_jtnnvae_molonly.txt'
+
     chem2feature = featurize_chems(
-        'data/davis2011kinase/chem_jtnnvae_molonly.txt', chems
+        chem_fname,
+        chems
     )
     prot2feature = featurize_prots(
         'data/davis2011kinase/prot_embeddings.txt', prots

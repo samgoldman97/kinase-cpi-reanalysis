@@ -68,6 +68,9 @@ def train(regress_type='hybrid', seed=1, **kwargs):
     y_obs = kwargs['y_obs']
     Kds = kwargs['Kds']
 
+    n_features_chem = kwargs['n_features_chem']
+    n_features_prot = kwargs['n_features_prot']
+
     kwargs['regress_type'] = regress_type
 
     # Debug.
@@ -352,10 +355,12 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('regress_type', help='model to use')
     parser.add_argument('--seed', type=int, default=1, help='random seed')
+    parser.add_argument('--use-morgan',  default=False, action = "store_true", 
+                        help="Use morgan fp feats")
     args = parser.parse_args()
 
     analyze_regressor(**train(
         regress_type=args.regress_type,
         seed=args.seed,
-        **process()
+        **process(use_morgan = args.use_morgan)
     ))

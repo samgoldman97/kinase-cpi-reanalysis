@@ -29,8 +29,9 @@ Debugging this on MLMP `python bin/train_davis2011kinase.py mlper1 --seed $i >> 
 Running with normalization: `CUDA_VISIBLE_DEVICES="" python bin/train_davis2011kinase.py mlper1norm`
 Running with normalization + sklearn: `CUDA_VISIBLE_DEVICES="" python bin/train_davis2011kinase.py mlper1normsklearn >> train_davis2011kinase_mlper1normsklearn.log`
 
+Running with ridge regr: `CUDA_VISIBLE_DEVICES="" python bin/train_davis2011kinase.py ridgesplit >> train_davis2011kinase_ridgesplit.log`
+Running with ridge regr + morgan: `CUDA_VISIBLE_DEVICES="" python bin/train_davis2011kinase.py ridgesplit_morgan  >> train_davis2011kinase_ridgesplit_morgan.log`
 Running on SLURM: `python slurm_scripts/run_cv.py`
-
 
 Making plots: 
 `python bin/plot_benchmark_cv.py`

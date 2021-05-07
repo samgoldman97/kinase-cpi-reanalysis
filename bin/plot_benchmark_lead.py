@@ -2,6 +2,7 @@ from utils import *
 
 import pandas as pd
 import seaborn as sns
+import re
 
 def parse_log(model, fname):
     data = []
@@ -22,7 +23,8 @@ def parse_log(model, fname):
             if not line:
                 break
 
-            if not line.startswith('2019') and not line.startswith('2020'):
+            starts_with_year = re.search(r"^20[0-9][0-9]-", line)
+            if starts_with_year is None:
                 continue
             if not ' | ' in line:
                 continue
@@ -77,12 +79,13 @@ def parse_log_dgraphdta(model, fname, seed):
 if __name__ == '__main__':
     models = [
         'gp',
-        'hybrid',
-        'bayesnn',
-        'mlper5g',
+        #'hybrid',
+        #'bayesnn',
+        #'mlper5g',
         'mlper1',
-        'cmf',
-        'dgraphdta'
+        'ridgesplit'
+        #'cmf',
+        #'dgraphdta'
     ]
 
     data = []
@@ -93,7 +96,7 @@ if __name__ == '__main__':
                          'seed{}.log'.format(seed))
                 data += parse_log_dgraphdta(model, fname, seed)
         else:
-            fname = ('iterate_davis2011kinase_{}_exploit.log'.format(model))
+            fname = ('iterate/log/iterate_davis2011kinase_{}_exploit.log'.format(model))
             data += parse_log(model, fname)
 
     df = pd.DataFrame(data, columns=[
@@ -109,10 +112,11 @@ if __name__ == '__main__':
         plt.figure()
         sns.barplot(x='model', y='Kd', data=df_subset, ci=95,
                     order=models, hue='uncertainty', dodge=False,
-                    palette=sns.color_palette("RdBu", n_colors=8,),
+                    palette=sns.color_palette("RdBu", n_colors=len(models),),
                     capsize=0.2,)
         plt.ylim([ -100, 10100 ])
-        plt.savefig('figures/benchmark_lead_{}.svg'.format(n_lead))
+        #plt.savefig('figures/benchmark_lead_{}.svg'.format(n_lead))
+        plt.savefig('figures/benchmark_lead_{}.png'.format(n_lead))
         plt.close()
 
         gp_Kds = df_subset[df_subset.model == 'gp'].Kd

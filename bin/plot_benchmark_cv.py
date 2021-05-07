@@ -84,6 +84,7 @@ if __name__ == '__main__':
         'mlper1normsklearn',
         'mlper1split',
         'ridgesplit',
+        'ridgesplit_morgan',
         'gpsplit',
         'hybrid'
 

@@ -51,11 +51,11 @@ class SingleTaskModel(object):
         self.prot_to_preds = defaultdict(lambda : []) 
         self.chem_to_preds = defaultdict(lambda : []) 
 
-        prot_feats = X[:, CHEM_FEATURE : ]
-        chem_feats = X[:, : CHEM_FEATURE]  
+        prot_feats = X[:, - PROT_FEATURE: ]
+        chem_feats = X[:, : -PROT_FEATURE]  
 
         # Verify size 
-        assert (chem_feats.shape[1] == CHEM_FEATURE)
+        assert (prot_feats.shape[1] == PROT_FEATURE)
 
         # Unique proteins and chems
         unique_prot = self.remove_duplicates(prot_feats)
@@ -98,11 +98,11 @@ class SingleTaskModel(object):
     def predict(self, X):
         """ Predict """
 
-        prot_feats = X[:, CHEM_FEATURE : ]
-        chem_feats = X[:, : CHEM_FEATURE]  
+        prot_feats = X[:, - PROT_FEATURE: ]
+        chem_feats = X[:, : -PROT_FEATURE]  
 
         # Verify size 
-        assert (chem_feats.shape[1] == CHEM_FEATURE)
+        assert (prot_feats.shape[1] == PROT_FEATURE)
 
         # Unique proteins and chems
         unique_prot = self.remove_duplicates(prot_feats)
