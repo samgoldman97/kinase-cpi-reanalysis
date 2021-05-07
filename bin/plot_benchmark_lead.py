@@ -78,7 +78,7 @@ def parse_log_dgraphdta(model, fname, seed):
 
 if __name__ == '__main__':
     models = [
-        'gp',
+        'hybrid',
         #'hybrid',
         #'bayesnn',
         #'mlper5g',
@@ -90,14 +90,15 @@ if __name__ == '__main__':
 
     data = []
     for model in models:
-        if model == 'dgraphdta':
-            for seed in range(5):
-                fname = ('../DGraphDTA/iterate_davis2011kinase_dgraphdta_'
-                         'seed{}.log'.format(seed))
-                data += parse_log_dgraphdta(model, fname, seed)
-        else:
-            fname = ('iterate/log/iterate_davis2011kinase_{}_exploit.log'.format(model))
-            data += parse_log(model, fname)
+        for seed in range(5):
+            if model == 'dgraphdta':
+                    fname = ('../DGraphDTA/iterate_davis2011kinase_dgraphdta_'
+                             'seed{}.log'.format(seed))
+                    data += parse_log_dgraphdta(model, fname, seed)
+            else:
+                fname = f'iterate/log/iterate_davis2011kinase_{model}_{seed}.log'
+                if os.path.exists(fname): 
+                    data += parse_log(model, fname)
 
     df = pd.DataFrame(data, columns=[
         'model', 'Kd', 'lead_num', 'seed', 'uncertainty',

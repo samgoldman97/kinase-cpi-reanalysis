@@ -58,8 +58,6 @@ def featurize_prots(fname, prots):
 
     assert(len(set(prots) - set(prot2feature.keys())) == 0)
 
-    import pdb
-    pdb.set_trace()
     return prot2feature
 
 def expected_acquisition(y_unk, n_acq=5, n_samples=100000):

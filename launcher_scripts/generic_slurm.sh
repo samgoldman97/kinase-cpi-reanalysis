@@ -6,8 +6,9 @@
 #SBATCH -J uq_reanalysis   # sensible name for the job
 #SBATCH --output=logs/slurm_generic_%j.log   # Standard output and error log
 #SBATCH -p sched_mit_ccoley
-#SBATCH --mem=5000 # 5 gb
-#SBATCH --mem=5000 # 5 gb
+#SBATCH -w node1238
+#SBATCH --mem=20000 # 10 gb
+##SBATCH --mem=20000 # 20 gb
 
 
 ##SBATCH --gres=gpu:1 #1 gpu
