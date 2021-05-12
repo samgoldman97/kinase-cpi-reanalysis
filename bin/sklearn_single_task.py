@@ -237,24 +237,24 @@ class HybridSingle(SingleTaskModel):
 
     def fit_single_model(self, X,y): 
         """ Make linear regresssion model """
-        gp_model = GaussianProcessRegressor(
-            kernel=self.kernel_,
-            normalize_y=False,
-            n_restarts_optimizer=self.n_restarts_,
-            copy_X_train=False,
+        from gaussian_process import GPRegressor
+        gp_model = GPRegressor(
+            backend='sklearn',#'gpytorch',
+            n_restarts=10,
+            verbose=True
         )
         sklearn_regr = MLPRegressor(hidden_layer_sizes=[200,200],
                                     activation='relu',
                                     solver='adam',
-                                    loss='mse',
                                     alpha=0.1,
                                     batch_size=500,
                                     max_iter=50,
                                     momentum=0.9,
                                     nesterovs_momentum=True,
-                                    verbose=False
+                                    verbose=True
         )
-        new_model =  HybridMLPEnsembleGP(sklearn_regr, gp_model)
 
+        new_model =  HybridMLPEnsembleGP(sklearn_regr, gp_model, 
+                                         use_uq = False, predict_flat = True)
         new_model.fit(X,y)
         return new_model
