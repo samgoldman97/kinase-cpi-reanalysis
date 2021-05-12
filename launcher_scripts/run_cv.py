@@ -10,8 +10,7 @@ import time
 
 exploit_models = ["hybrid", "mlper1", "ridgesplit", "ridgesplit_morgan",
                   "hybridsplit", 'mlper1split']
-exploit_models = ["ridgesplit", "ridgesplit_morgan",
-                  "hybridsplit", 'mlper1split']
+exploit_models = [ "hybridsplit"]
 experiment_name = "uq_cv"
 log_dir = "target/log"
 slurm_script = "launcher_scripts/generic_slurm.sh"

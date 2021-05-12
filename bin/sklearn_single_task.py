@@ -231,7 +231,7 @@ class GPSingle(SingleTaskModel):
 class HybridSingle(SingleTaskModel):
     def __init__(self, kernel=None, 
                  n_restarts = 0,**kwargs):
-        super(GPSingle, self).__init__(**kwargs)
+        super(HybridSingle, self).__init__(**kwargs)
         self.kernel_ = kernel
         self.n_restarts_ = n_restarts
 
