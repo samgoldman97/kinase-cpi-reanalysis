@@ -122,11 +122,21 @@ def train(regress_type='hybrid', seed=1, **kwargs):
         from sklearn_single_task import LinearSingle
         regressor = LinearSingle()
 
+    elif regress_type == 'ridgesplit_morgan':
+        from sklearn_single_task import LinearSingle
+        regressor = LinearSingle()
+
     elif regress_type == 'gpsplit':
         from sklearn_single_task import GPSingle
         from sklearn.gaussian_process.kernels import RBF, ConstantKernel as C
         # NOTE: Add more jobs for parallel?
         regressor = GPSingle(kernel=C(10000., 'fixed') * RBF(1., 'fixed'), )
+
+    elif regress_type == 'hybridsplit':
+        from sklearn_single_task import HybridSingle
+        from sklearn.gaussian_process.kernels import RBF, ConstantKernel as C
+        # NOTE: Add more jobs for parallel?
+        regressor = HybridSingle(kernel=C(10000., 'fixed') * RBF(1., 'fixed'), )
 
     elif regress_type == 'mlper1split':
         regressor = mlp_ensemble(
@@ -138,7 +148,6 @@ def train(regress_type='hybrid', seed=1, **kwargs):
             backend="sklearn", 
             seed=seed,
         )
-
 
     elif regress_type == 'dmlper1':
         regressor = mlp_ensemble(
@@ -358,6 +367,9 @@ if __name__ == '__main__':
     parser.add_argument('--use-morgan',  default=False, action = "store_true", 
                         help="Use morgan fp feats")
     args = parser.parse_args()
+
+    if args.regress_type == "ridgesplit_morgan": 
+        args.use_morgan = True
 
     analyze_regressor(**train(
         regress_type=args.regress_type,
