@@ -38,6 +38,12 @@ Making plots:
 
 
 
+*Running full experiments on engaging:* 
+
+`launcher_scripts/run_cv.py`, launcher_scripts/exploit.py`
+
+
+
 
 ### Data
 
