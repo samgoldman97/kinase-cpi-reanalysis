@@ -105,6 +105,7 @@ def split_data(Kds, chems, genes, prots, chem2feature, prot2feature):
 
             # Repurpose known chemicals.
             [ idx_repurpose.append((i, j)) for j in prot_idx_train ]
+
             # Identify novel interactions.
             [ idx_novel.append((i, j)) for j in prot_idx_test ]
 
