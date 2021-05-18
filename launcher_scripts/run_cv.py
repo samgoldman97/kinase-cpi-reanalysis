@@ -26,7 +26,7 @@ def main():
     cuda_visible = "CUDA_VISIBLE_DEVICES=\"\"" #""
     exploit_params = ""
 
-    for seed in [0]:#, 1,2,3,4]:
+    for seed in [0,1,2,3,4]:
         for exploit_model in exploit_models: 
             output_name = os.path.join(log_dir,
                                        f"train_davis2011kinase_{exploit_model}_{seed}.log")

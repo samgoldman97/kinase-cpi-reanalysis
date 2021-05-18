@@ -14,8 +14,13 @@ class HybridMLPEnsembleGP(object):
         y_pred = self.mlp_ensemble_.predict(X)
 
         # If using sklearn model, we need to reshape
-        if len(y_pred.shape) == 1:
+        #print(f"(fit) Hybrid model y_pred shape: {y_pred.shape}")
+        #print(f"(fit) Hybrid model y shape: {y.shape}")
+        if len(y_pred.shape) == 1 and len(y.shape) != 1:
             y_pred = y_pred.reshape(-1, 1)
+
+        #print(f"(fit post reshape) Hybrid model y_pred shape: {y_pred.shape}")
+        #print(f"(fit post reshape) Hybrid model y shape: {y.shape}")
 
         self.gaussian_process_.fit(X, y - y_pred)
 
