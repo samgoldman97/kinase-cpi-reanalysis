@@ -193,8 +193,9 @@ def process(use_morgan=False):
     prot2feature = featurize_prots(
         'data/davis2011kinase/prot_embeddings.txt', prots
     )
-    ##  WHY is prot dimension so high??
 
+    # NOTE: The protein repr. is higher than 100 dimensions as it uses multiple
+    # layers of the pretrained language model
     process_data = split_data(
         Kds, chems, genes, prots, chem2feature, prot2feature
     )

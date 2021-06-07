@@ -26,7 +26,7 @@ CHEM_FEATURE = 28
 
 class SingleTaskModel(object):
 
-    def __init__(self, normalize = True):
+    def __init__(self, normalize = False):
 
         # Define scalers
         self.normalize = normalize

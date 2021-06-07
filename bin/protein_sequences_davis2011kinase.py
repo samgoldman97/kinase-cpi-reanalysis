@@ -79,7 +79,6 @@ def process_seqs(fname, genes, prots):
         elif prot.startswith('CDK4'):
             if prot.endswith('cyclinD1'):
                 seqs.append((gene2seq['CDK4'], gene2seq['CCND1']))
-            # SLG: Is this an error? 
             elif prot.endswith('cyclinD3'):
                 seqs.append((gene2seq['CDK4'], gene2seq['CCND1']))
             else:

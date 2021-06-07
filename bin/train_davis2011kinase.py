@@ -109,15 +109,6 @@ def train(regress_type='hybrid', seed=1, **kwargs):
             seed=seed,
         )
 
-    elif regress_type == 'mlper1norm':
-        regressor = mlp_ensemble(
-            n_neurons=200,
-            n_regressors=1,
-            normalize=True,
-            n_epochs=50,
-            seed=seed,
-        )
-
     elif regress_type == 'ridgesplit':
         from sklearn_single_task import LinearSingle
         regressor = LinearSingle()

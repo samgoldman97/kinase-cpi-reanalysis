@@ -191,9 +191,10 @@ class MLPEnsembleRegressor(object):
 
     def fit(self, X, y):
         y = y.flatten()
-        self.scaler = StandardScaler()
-        y = self.scaler.fit_transform(y.reshape(-1,1)).flatten()
 
+        if self.normalize: 
+            self.scaler = StandardScaler()
+            y = self.scaler.fit_transform(y.reshape(-1,1)).flatten()
 
         if len(y) != X.shape[0]:
             raise ValueError('Data has {} samples and {} labels.'
