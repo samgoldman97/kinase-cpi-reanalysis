@@ -2,11 +2,9 @@
 
 This repository contains the analysis source code used in the paper ["Leveraging uncertainty in machine learning accelerates biological discovery and design"](https://www.cell.com/cell-systems/fulltext/S2405-4712(20)30364-1) by Brian Hie, Bryan Bryson, and Bonnie Berger (Cell Systems, 2020).
 
+### Kinase-CPI-Reanalysis
 
-
-
-### SLG Notes 
-
+This section reflects a set of notes summarizing changes to the code 
 
 #### Summary of changes: 
 
@@ -49,41 +47,39 @@ This repository contains the analysis source code used in the paper ["Leveraging
 15. `notebook/make_figs.ipynb`:
         - Notebook to make figures using strategies from `bin/plot_benchmark_*`
 
+#### New models added
+
+We have added several models to this repository:
+1. `ridgesplit`: This represents ridge regression as implemented in Sklearn. Rather than train a single ridge regression model, a different model is trained specific to each protein task and each substrate task. For instance, if we want to predict the value of substrate *e*  and substrate *s*. If *s* has been seen in the training set but *e* has not, then a ridge regression model specific to substrate *s* will be used to predict the Kd for *e*. For the totally unobserved quadrant where neither *s* nor *e* has been seen, all models making predictions about enzymes are used to predict *e* and vice versa for *s*. These are averaged together to make a single prediction about the pair of *s* and *e*. 
+2. `mlper1norm`: An MLP model with standard normalized target values.
+3. `mlper1normsklearn`: An MLP model with standard normalized target values implemented in sklearn
+4. `ridgesplit_morgan`: Equivalent to `ridgesplit` but using Morgan FP's.
+5. `gpsplit`: Equivalent to `ridgesplit` but using gaussian processes
+6. `hybridsplit`: Equivalent to `ridgesplit` but using hybrid MLP and GP models
+7. `mlper1split`: Equivalent ot `ridgesplit` but using an MLP model. By default, this is normalized as it uses an SKLearn implementation that gives poor predictions without normalization.
+
 
 #### Installation directions
+
+To create an enviornment on cluster: 
 
 conda create --name hie python=3.6 tensorflow-gpu=1.15
 pip install -r requirements.txt
 
 
-#### Engaging 
+#### Running experiments
 
+Both benchmarking and exploitation experiments were run. 
 
-Getting an interactive session:
+CV experiments can be run directly using `launcher_scripts/run_cv.py` or `launcher_scripts/run_exploit.py` . These files rely on a slurm launch script, `generic_slurm.sh`. To run these commands locally, the `--local` can be used (i.e., `python launcher_scripts/run_cv.py --local`). This will generate logs for 5 different seeds of the experiments. 
 
+In cross validation, we test CPI models as originally implemented (MLP + GP, MLP), original models without CPI (MLP + GP split, MLP split), and logistic regression models without CPI (ridge split, ridge split without figures). 
 
-`srun -N 1 -n 1 --gres=gpu:1 --time=1:00:00 --partition=sched_mit_ccoley --constraint=centos7 --mem-per-cpu=100000 --pty bash -in`
+In exploitation, we test MLP + GP and MLP CPI models against ridge split regression models.
 
-conda env: 
+#### Plotting results
 
-`conda activate hie`
-
-Debugging this on MLMP `python bin/train_davis2011kinase.py mlper1 --seed $i >> train_davis2011kinase_mlper1.log`
-
-Running with normalization: `CUDA_VISIBLE_DEVICES="" python bin/train_davis2011kinase.py mlper1norm`
-Running with normalization + sklearn: `CUDA_VISIBLE_DEVICES="" python bin/train_davis2011kinase.py mlper1normsklearn >> train_davis2011kinase_mlper1normsklearn.log`
-
-Running with ridge regr: `CUDA_VISIBLE_DEVICES="" python bin/train_davis2011kinase.py ridgesplit >> train_davis2011kinase_ridgesplit.log`
-Running with ridge regr + morgan: `CUDA_VISIBLE_DEVICES="" python bin/train_davis2011kinase.py ridgesplit_morgan  >> train_davis2011kinase_ridgesplit_morgan.log`
-Running on SLURM: `python slurm_scripts/run_cv.py`
-
-Making plots: 
-`python bin/plot_benchmark_cv.py`
-
-*Running full experiments on engaging:* 
-
-`launcher_scripts/run_cv.py`, launcher_scripts/exploit.py`
-
+After generating results with the scripts above (see *Running experiments* section) in `target/log/` and `iterate/log/`,  results can be plotted using the notebook `notebook/make_figs.ipynb`. Alternatively, this can be accomplished 
 
 ### Data
 

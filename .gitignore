@@ -1,3 +1,6 @@
+.DS_store
+engaging_cmds.txt
+notebook/.ipynb_checkpoints
 *.egg-info
 *.log
 *.log.*
