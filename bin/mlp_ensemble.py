@@ -282,7 +282,6 @@ class MLPEnsembleRegressor(object):
 
     def predict(self, X):
 
-
         if self.split: 
             prot_feats = X[:, -PROT_FEATURE: ]
             chem_feats = X[:, : -PROT_FEATURE]  

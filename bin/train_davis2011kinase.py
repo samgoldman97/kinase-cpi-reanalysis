@@ -134,7 +134,7 @@ def train(regress_type='hybrid', seed=1, **kwargs):
             n_neurons=200,
             n_regressors=1,
             split=True,
-            normalize=False, 
+            normalize=True, 
             n_epochs=50,
             backend="sklearn", 
             seed=seed,
