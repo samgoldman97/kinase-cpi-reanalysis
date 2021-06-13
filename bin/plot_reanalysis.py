@@ -55,6 +55,7 @@ method_name_map = {
     "mlper1split": "MLP",
 }
 
+REF_NUM = 35
 
 # Helpers
 def get_colors(x: list):
@@ -195,8 +196,8 @@ def make_cv_plots():
         [index * gap_size for index, i in enumerate(joint_list) for j in i])
     plot_positions = np.arange(len(full_list)) + shift_factors
 
-    x_labels = ["Hie et al.\n(CPI)"] * len(orig_models) + [
-        "Hie et al.\n(No CPI)"
+    x_labels = [f"Ref. {REF_NUM}\n(CPI)"] * len(orig_models) + [
+        f"Ref. {REF_NUM}\n(No CPI)"
     ] * len(no_cpi) + ["Linear\n(No CPI)"] * len(ours)
 
     x_colors = get_colors(joint_list)
@@ -233,6 +234,13 @@ def make_cv_plots():
         'observed', 'unknown_all', 'unknown_side', 'unknown_repurpose',
         'unknown_novel'
     ])
+    title_rename = {
+        "observed": "Observed",
+        "unknown_all" : "All",
+        "unknown_repurpose" : "Discovery\n(New drug)",
+        "unknown_side" : "Repurposing\n(New kinase)",
+        "unknown_novel" : "Novel\n(New kinase and drug)"
+    }
     metrics = np.array(['MSE', 'Pearson rho', 'Spearman r'])
 
     for quadrant in quadrants[1:]:
@@ -306,13 +314,17 @@ def make_cv_plots():
 
             save_name = os.path.join(out_dir,
                                      f'benchmark_cv_{metric}_{quadrant}.pdf')
+
+            new_title = title_rename[quadrant]
+            plt.title(new_title)
+
             plt.savefig(save_name, bbox_inches="tight")
             print(save_name)
             plt.close()
     return color_map
 
 
-def make_exploit_plots(color_map):
+def make_exploit_plots(color_map, log_scale = False):
     """ Make exploit plots """
     out_dir = "results/figures/exploit"
     os.makedirs(out_dir, exist_ok=True)
@@ -335,7 +347,10 @@ def make_exploit_plots(color_map):
     #tick_labels = [model_renames[model] for model in models]
 
     ticks = [np.mean(plot_positions[:1]), plot_positions[2]]
-    tick_labels = ["Hie et al.\n(CPI)", "Ridge\n(No CPI)"]
+
+    #tick_labels = ["Hie et al.\n(CPI)", "Ridge\n(No CPI)"]
+
+    tick_labels = ["Ref. 35\n(CPI)", "Linear\n(No CPI)"]
 
     data = []
     for model in models:
@@ -411,15 +426,22 @@ def make_exploit_plots(color_map):
                    horizontalalignment="center")
         plt.ylabel(x_label_map[val_name])
         #     plt.xlabel("Method")
-        #     plt.yscale("log")
         save_name = os.path.join(out_dir, f'benchmark_lead_{n_lead}.pdf')
-        print(save_name)
-        #     plt.ylim([0.025, 40])
-        #     plt.yticks([0.1,1,10], labels= ["$10^{-1}$", "$10^{0}$", "$10^{1}$"])
+        if log_scale: 
+            plt.yscale("log")
+            plt.yticks([0.1,1,10], labels= ["$10^{-1}$", "$10^{0}$", "$10^{1}$"])
+            plt.ylim([0.02,11])
+            save_name = os.path.join(out_dir, f'benchmark_lead_{n_lead}_log.pdf')
+        else:
+            plt.ylim([0,8])
+            save_name = os.path.join(out_dir, f'benchmark_lead_{n_lead}.pdf')
+        plt.title(f"Top {n_lead}")
+
         plt.savefig(save_name, bbox_inches="tight")
         plt.close()
 
 
 if __name__ == "__main__":
     color_map = make_cv_plots()
-    make_exploit_plots(color_map)
+    make_exploit_plots(color_map, log_scale = False)
+    make_exploit_plots(color_map, log_scale = True)
