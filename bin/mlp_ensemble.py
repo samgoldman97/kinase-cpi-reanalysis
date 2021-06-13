@@ -208,8 +208,9 @@ class MLPEnsembleRegressor(object):
         if self.split:  
 
             if self.backend_ == "keras":
-                fit_kwargs = {"batch_size" : self.batch_sizes_[model_idx],
-                              "epochs" : self.max_iters_[model_idx],
+                # Use model_idx = 0
+                fit_kwargs = {"batch_size" : self.batch_sizes_[0],
+                              "epochs" : self.max_iters_[0],
                               "verbose" : self.verbose_} 
             else:
                 fit_kwargs = {}

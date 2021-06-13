@@ -168,6 +168,157 @@ def parse_log_cv(model, fname):
 
     return data
 
+def make_mlp_debug_plots():
+    """Make cv plots """
+
+
+    models = ["mlper1", "mlper1split", "mlper1splitnorm", 
+              "mlper1splitsklearn", "mlper1splitnormsklearn"]
+
+
+    panel_height = 3.5
+    panel_width = 5.5
+
+    orig_models = ["mlper1"]
+    no_cpi = ["mlper1split", "mlper1splitnorm", 
+              "mlper1splitsklearn", "mlper1splitnormsklearn"]
+    ours = []
+
+    uq_methods = ["hybrid", "hybridsplit"]
+    joint_list = [orig_models, no_cpi, ours]
+
+    full_list = [x for i in joint_list for x in i]
+    gap_size = 0.3
+    shift_factors = np.array(
+        [index * gap_size for index, i in enumerate(joint_list) for j in i])
+    plot_positions = np.arange(len(full_list)) + shift_factors
+
+    x_labels = [f"Ref. {REF_NUM}\n(CPI)"] * len(orig_models) + [
+        f"Ref. {REF_NUM}\n(No CPI)"
+    ] * len(no_cpi) + ["Linear\n(No CPI)"] * len(ours)
+
+    x_colors = get_colors(joint_list)
+    color_map = dict(zip(full_list, x_colors))  # dict of colors
+
+    out_dir = "results/figures/mlp_cv"
+    os.makedirs(out_dir, exist_ok=True)
+
+    # Get data frame
+    data = []
+    for model in models:
+        for seed in range(5):
+            fname = f'target/log_mlp_debug/train_davis2011kinase_{model}_{seed}.log'
+            if os.path.exists(fname):
+                data += parse_log_cv(model, fname)
+            else:
+                print(fname)
+
+    df = pd.DataFrame(data,
+                      columns=[
+                          'model',
+                          'metric',
+                          'quadrant',
+                          'value',
+                          'uncertainty',
+                      ])
+
+    metric_map = {
+        "Pearson rho": r"Pearson $\rho$",
+        "Spearman r": r"Spearman $\rho$",
+    }
+
+    quadrants = np.array([
+        'observed', 'unknown_all', 'unknown_side', 'unknown_repurpose',
+        'unknown_novel'
+    ])
+    title_rename = {
+        "observed": "Observed",
+        "unknown_all" : "All",
+        "unknown_repurpose" : "Discovery\n(New drug)",
+        "unknown_side" : "Repurposing\n(New kinase)",
+        "unknown_novel" : "Novel\n(New kinase and drug)"
+    }
+    metrics = np.array(['MSE', 'Pearson rho', 'Spearman r'])
+
+    for quadrant in quadrants[1:]:
+        quadrant_df = df[df['quadrant'] == quadrant]
+
+        for metric in metrics:
+            metric_df = quadrant_df[quadrant_df['metric'] == metric]
+            plt.figure(figsize=(panel_width, panel_height))
+            bars = []
+            for color, plot_position, method in zip(x_colors, plot_positions,
+                                                    full_list):
+                temp_df = metric_df[metric_df["model"] == method]
+                vals = temp_df["value"]
+                bar_height = np.mean(vals)
+                error_height = 1.96 * stats.sem(vals)
+                label_name = method_name_map[method]
+                hatch = "/" if method in uq_methods else None
+                hatch = None
+                bars.append(
+                    plt.bar(plot_position,
+                            bar_height,
+                            color=color,
+                            label=label_name,
+                            width=1.01,
+                            hatch=hatch))
+                plt.errorbar(plot_position,
+                             bar_height,
+                             yerr=error_height,
+                             color="Black",
+                             capsize=5,
+                             capthick=2,
+                             linewidth=1)
+
+            # Set labels
+            ticks, labels = [], []
+            for label in np.unique(x_labels):
+                # Cnter on middle box
+                avg_pos = np.mean(
+                    np.array(plot_positions)[np.array(x_labels) == label])
+                ticks.append(avg_pos)
+                labels.append(label)
+    #         for tick, label in zip(ticks, labels):
+    #             plt.text(tick, -0.4, label, rotation=30,
+    #                     ha="center", va="center")#label, (tick, -0.2), )
+
+            if (metric == 'Pearson rho'
+                    or metric == 'Spearman r') and quadrant != 'unknown_all':
+                plt.ylim([0.0, 0.8])
+            if metric == 'MSE' and quadrant != 'unknown_all':
+                plt.ylim([-0.01e7, 3e7])
+            plt.xticks(ticks,
+                       labels=labels,
+                       rotation=50,
+                       horizontalalignment="center")
+            plt.ylabel(metric_map.get(metric, metric))
+
+            handles = []
+            #         handles.append(mpatches.Patch(facecolor="black", alpha=0.9,hatch="///",label="Uncertainty"))
+            #         handles.append(mpatches.Patch(facecolor="black", alpha=0.9,hatch="",label="No Uncertainty"))
+            bars.extend(handles)
+            plt.legend(
+                handles=bars,
+                ncol=int(len(full_list) / 2),  # + 1), 
+                bbox_to_anchor=(0.5, -1.5),
+                loc="lower center",
+            )
+
+            # Right legend
+            #         plt.legend(handles=bars, ncol=1,#int(len(full_list) / 2),# + 1),
+            #                bbox_to_anchor = (1.5, 0.5),loc="center", )
+
+            save_name = os.path.join(out_dir,
+                                     f'benchmark_cv_{metric}_{quadrant}.pdf')
+
+            new_title = title_rename[quadrant]
+            plt.title(new_title)
+
+            plt.savefig(save_name, bbox_inches="tight")
+            print(save_name)
+            plt.close()
+    return color_map
 
 def make_cv_plots():
     """Make cv plots """
@@ -442,6 +593,7 @@ def make_exploit_plots(color_map, log_scale = False):
 
 
 if __name__ == "__main__":
+    make_mlp_debug_plots()
     color_map = make_cv_plots()
     make_exploit_plots(color_map, log_scale = False)
     make_exploit_plots(color_map, log_scale = True)
