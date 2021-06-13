@@ -8,44 +8,39 @@ This section reflects a set of notes summarizing changes to the code
 
 #### Summary of changes: 
 
-1. `README.md`: 
-        - Added description of changes and instructions
-2. `bin/cv.sh`: 
-        - Added annotations to bin/cv.sh for model description
-3. `bin/exploit.sh`:  
-        - Added cuda visible devices to prevent gpu running and proper output
-4. `bin/hybrid.py`: 
-        - Added new args, `use_uq`, `predict_flat` to decide when to use uq and when to predict flat objs. 
-        - Added reshape to y
-5. `bin/mlp_ensemble.py`: 
-        - Added split and normalize parameters for normalizing GP's and treating GP + split as different
-        - `remove_duplicates` function added to aid in splitting
-        - Add standard scaler to all input y values for fit
-        - allow MSE loss 
-6. `bin/plot_benchmark_cv.py`: 
-        - Added support for experiments in 2021
-        - Added new make figure tags for additional models
-        - Modified color palette
-7. `bin/plot_benchmark_lead.py`:        
-        - Identical changes to `bin/plot_benchmark_cv.py`
-8. `bin/plot_benchmark_lead_quad.py`: 
-        - Identical changes to `bin/plot_benchmark_cv.py`
-9. `bin/process_davis20111kinase.py`:
-        - Add flag for using morgan fingeprrints
-10. `bin/sklearn_single_task.py`: 
-        - New file to contain generic sklearn models using different featurizers for both proteins and compounds 
-11. `bin/train_davis2011kinase.py`: 
+1. `bin/hybrid.py`:    
+        - Added new args, `use_uq`, `predict_flat` to decide when to use uq and when to predict flat objs.    
+        - Added reshape to y   
+
+2. `bin/mlp_ensemble.py`: 
+        - Added split and normalize parameters for normalizing GP's and treating GP + split as different   
+        - `remove_duplicates` function added to aid in splitting   
+        - Add standard scaler to all input y values for fit    
+        - allow MSE loss    
+
+3. `bin/plot_benchmark_cv.py`, `bin/plot_benchmark_lead.py`, `bin/plot_benchmark_lead_quad.py`: 
+        - Added support for experiments in 2021   
+        - Added new make figure tags for additional models   
+        - Modified color palette   
+
+4. `bin/process_davis20111kinase.py`:   
+        - Add flag for using morgan fingeprrints   
+
+5. `bin/sklearn_single_task.py`:    
+        - New file to contain generic sklearn models using different featurizers for both proteins and compounds   
+
+6. `bin/train_davis2011kinase.py`:   
         - Add support for an sklearn backend  in mlp_ensemble
-        - Add support for morgan fingerprint
-        - Add new models mlper1norm, mlper1normsklearn, ridgesplit, ridgesplit_morgan, gpsplit, hybridsplit, mlper1split,
-12. `launcher_scripts/generic_slurm.sh`: 
-        - Generic launcher script
-13. `launcher_scripts/run_cv.sh`: 
-        - Script to run cv models
-14. `launcher_scripts/run_exploit.sh`: 
-        - Script to run iterative selection
-15. `notebook/make_figs.ipynb`:
-        - Notebook to make figures using strategies from `bin/plot_benchmark_*`
+        - Add support for morgan fingerprint   
+        - Add new models mlper1norm, mlper1normsklearn, ridgesplit, ridgesplit_morgan, gpsplit, hybridsplit, mlper1split,  
+
+7. `launcher_scripts/`:
+        - Python scripts to run cv and exploit experiments  
+        - Additional slurm script  
+
+8. `bin/make_figs.ipynb` and `bin/plot_reanalysis.py`:   
+        - Notebook and equivalent script to make figures using strategies from `bin/plot_benchmark_*`
+
 
 #### New models added
 
@@ -56,7 +51,7 @@ We have added several models to this repository:
 4. `ridgesplit_morgan`: Equivalent to `ridgesplit` but using Morgan FP's.
 5. `gpsplit`: Equivalent to `ridgesplit` but using gaussian processes
 6. `hybridsplit`: Equivalent to `ridgesplit` but using hybrid MLP and GP models
-7. `mlper1split`: Equivalent ot `ridgesplit` but using an MLP model. By default, this is normalized as it uses an SKLearn implementation that gives poor predictions without normalization.
+7. `mlper1split`: Equivalent to `ridgesplit` but using an MLP model. By default, this is normalized as it uses an SKLearn implementation that gives poor predictions without normalization.
 
 
 #### Installation directions
