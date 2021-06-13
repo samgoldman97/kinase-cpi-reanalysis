@@ -129,7 +129,7 @@ def train(regress_type='hybrid', seed=1, **kwargs):
         # NOTE: Add more jobs for parallel?
         regressor = HybridSingle(kernel=C(10000., 'fixed') * RBF(1., 'fixed'), )
 
-    elif regress_type == 'mlper1split':
+    elif regress_type == 'mlper1splitsklearnnorm':
         regressor = mlp_ensemble(
             n_neurons=200,
             n_regressors=1,
@@ -137,6 +137,39 @@ def train(regress_type='hybrid', seed=1, **kwargs):
             normalize=True, 
             n_epochs=50,
             backend="sklearn", 
+            seed=seed,
+        )
+
+    elif regress_type == 'mlper1splitsklearn':
+        regressor = mlp_ensemble(
+            n_neurons=200,
+            n_regressors=1,
+            split=True,
+            normalize=False, 
+            n_epochs=50,
+            backend="sklearn", 
+            seed=seed,
+        )
+
+    elif regress_type == 'mlper1split':
+        regressor = mlp_ensemble(
+            n_neurons=200,
+            n_regressors=1,
+            split=True,
+            normalize=False, 
+            n_epochs=50,
+            backend="keras", 
+            seed=seed,
+        )
+
+    elif regress_type == 'mlper1splitnorm':
+        regressor = mlp_ensemble(
+            n_neurons=200,
+            n_regressors=1,
+            split=True,
+            normalize=True, 
+            n_epochs=50,
+            backend="keras", 
             seed=seed,
         )
 

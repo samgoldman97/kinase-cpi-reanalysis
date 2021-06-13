@@ -207,6 +207,14 @@ class MLPEnsembleRegressor(object):
         # Splitting
         if self.split:  
 
+            if self.backend_ == "keras":
+                fit_kwargs = {"batch_size" : self.batch_sizes_[model_idx],
+                              "epochs" : self.max_iters_[model_idx],
+                              "verbose" : self.verbose_} 
+            else:
+                fit_kwargs = {}
+
+
             # Use these for the novel examples later
             self.prot_to_preds = defaultdict(lambda : []) 
             self.chem_to_preds = defaultdict(lambda : []) 
@@ -242,10 +250,7 @@ class MLPEnsembleRegressor(object):
                 self._create_models(X_temp, y_temp, clear=False)
                 self.prot_task_models[prot_task] = self.models_[-1]
                 cur_model = self.prot_task_models[prot_task] 
-                cur_model.fit(X_temp, y_temp)
-                              #, batch_size=self.batch_sizes_[0], 
-                              #epochs=self.max_iters_[0], 
-                              #verbose=self.verbose_)
+                cur_model.fit(X_temp, y_temp, **fit_kwargs)
 
             # Now train each chem task model 
             print("Training chem task models")
@@ -258,10 +263,7 @@ class MLPEnsembleRegressor(object):
                 self._create_models(X_temp, y_temp)
                 self.chem_task_models[chem_task] = self.models_[-1]
                 cur_model = self.chem_task_models[chem_task] 
-                cur_model.fit(X_temp, y_temp)
-                              #, batch_size=self.batch_sizes_[0], 
-                              #epochs=self.max_iters_[0], 
-                              #verbose=self.verbose_)
+                cur_model.fit(X_temp, y_temp, **fit_kwargs)
         else: 
             self._create_models(X, y)
 
