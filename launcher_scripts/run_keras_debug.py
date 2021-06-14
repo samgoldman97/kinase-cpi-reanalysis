@@ -9,8 +9,10 @@ import tqdm
 import time
 
 # Target models
-exploit_models = ["mlper1", "mlper1split", "mlper1splitnorm", 
-                  "mlper1splitsklearn", "mlper1splitnormsklearn"]
+exploit_models = ["mlper1", "mlper1norm", "mlper1split", 
+                  "mlper1splitnorm", "mlper1splitsklearn", 
+                  "mlper1splitnormsklearn"]
+exploit_models = ["mlper1norm"]
 
 experiment_name = "uq_cv"
 log_dir = "target/log_mlp_debug"

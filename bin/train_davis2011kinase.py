@@ -127,7 +127,18 @@ def train(regress_type='hybrid', seed=1, **kwargs):
         from sklearn_single_task import HybridSingle
         from sklearn.gaussian_process.kernels import RBF, ConstantKernel as C
         # NOTE: Add more jobs for parallel?
-        regressor = HybridSingle(kernel=C(10000., 'fixed') * RBF(1., 'fixed'), )
+        regressor = HybridSingle(kernel=C(10000., 'fixed') * RBF(1., 'fixed'), 
+                                 norm_mlp = False,
+                                 mlp_backend = "keras")
+
+    elif regress_type == 'hybridsplitnorm':
+        from sklearn_single_task import HybridSingle
+        from sklearn.gaussian_process.kernels import RBF, ConstantKernel as C
+        # NOTE: Add more jobs for parallel?
+        regressor = HybridSingle(kernel=C(10000., 'fixed') * RBF(1., 'fixed'), 
+                                 norm_mlp = True,
+                                 mlp_backend = "keras"
+                                 )
 
     elif regress_type == 'mlper1splitnormsklearn':
         regressor = mlp_ensemble(
@@ -276,6 +287,25 @@ def train(regress_type='hybrid', seed=1, **kwargs):
             mlp_ensemble(
                 n_neurons=200,
                 n_regressors=1,
+                normalize=False,
+                n_epochs=50,
+                seed=seed,
+            ),
+            GPRegressor(
+                backend='sklearn',#'gpytorch',
+                n_restarts=10,
+                n_jobs=10,
+                verbose=True,
+            ),
+        )
+    elif regress_type == 'hybridnorm':
+        from gaussian_process import GPRegressor
+        from hybrid import HybridMLPEnsembleGP
+        regressor = HybridMLPEnsembleGP(
+            mlp_ensemble(
+                n_neurons=200,
+                n_regressors=1,
+                normalize=True,
                 n_epochs=50,
                 seed=seed,
             ),

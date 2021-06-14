@@ -9,8 +9,16 @@ import tqdm
 import time
 
 # Target models
-exploit_models = ["hybrid", "mlper1", "ridgesplit", "ridgesplit_morgan",
-                  "hybridsplit", 'mlper1split'] 
+exploit_models_main = ["hybrid", "mlper1", "ridgesplit", "ridgesplit_morgan", 
+                       "hybridsplitnorm", "mlper1splitnorm"] 
+
+# Use these to get controls on running the default models with normalization
+exploit_models_norm = ["hybridnorm", "mlper1norm"]
+
+exploit_models = exploit_models_main + exploit_models_norm
+
+#exploit_models =[ "hybrid", "mlper1", "hybridsplitnorm", "mlper1splitnorm", 
+#                 "hybridnorm", "mlper1norm"]
 
 experiment_name = "uq_cv"
 log_dir = "target/log"
@@ -39,7 +47,7 @@ def main(run_local):
                 cmd_str = f"sbatch --export=CMD=\"{python_string}\" {sbatch_args} {slurm_script}"
 
             # Uncomment this out to see the command strings
-            # print(cmd_str)
+            print(cmd_str)
             subprocess.call(cmd_str, shell=True)
 
 if __name__=="__main__": 

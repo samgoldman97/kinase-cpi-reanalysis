@@ -14,7 +14,8 @@ from collections import defaultdict
 from sklearn.linear_model import Ridge
 from sklearn.preprocessing import StandardScaler
 from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.neural_network import MLPRegressor
+#from sklearn.neural_network import MLPRegressor
+from mlp_ensemble import MLPEnsembleRegressor
 from hybrid  import HybridMLPEnsembleGP
 
 from utils import tprint
@@ -230,10 +231,15 @@ class GPSingle(SingleTaskModel):
 
 class HybridSingle(SingleTaskModel):
     def __init__(self, kernel=None, 
-                 n_restarts = 0,**kwargs):
+                 n_restarts = 0,
+                 norm_mlp = False,
+                 mlp_backend = "keras",
+                 **kwargs):
         super(HybridSingle, self).__init__(**kwargs)
         self.kernel_ = kernel
         self.n_restarts_ = n_restarts
+        self.norm_mlp = norm_mlp
+        self.backend_ = mlp_backend
 
     def fit_single_model(self, X,y): 
         """ Make linear regresssion model """
@@ -243,18 +249,36 @@ class HybridSingle(SingleTaskModel):
             n_restarts=10,
             verbose=True
         )
-        sklearn_regr = MLPRegressor(hidden_layer_sizes=[200,200],
-                                    activation='relu',
-                                    solver='adam',
-                                    alpha=0.1,
-                                    batch_size=500,
-                                    max_iter=50,
-                                    momentum=0.9,
-                                    nesterovs_momentum=True,
-                                    verbose=True
+
+        # Simple sklearn implementation
+        #mlp_regr = MLPRegressor(hidden_layer_sizes=[200,200],
+        #                            activation='relu',
+        #                            solver='adam',
+        #                            alpha=0.1,
+        #                            batch_size=500,
+        #                            max_iter=50,
+        #                            momentum=0.9,
+        #                            nesterovs_momentum=True,
+        #                            verbose=True
+        #)
+
+        mlp_regr = MLPEnsembleRegressor(
+            layer_sizes_list=[[200,200]],
+            activations='relu',
+            solvers='adam',
+            alphas=0.1,
+            batch_sizes=500,
+            split=False,
+            max_iters=50,
+            momentums=0.9,
+            normalize = self.norm_mlp,
+            backend=self.backend_,
+            nesterovs_momentums=True,
+            verbose=True
         )
 
-        new_model =  HybridMLPEnsembleGP(sklearn_regr, gp_model, 
-                                         use_uq = False, predict_flat = True)
+        new_model =  HybridMLPEnsembleGP(mlp_regr, gp_model, 
+                                         use_uq = False, 
+                                         predict_flat = True)
         new_model.fit(X,y)
         return new_model
