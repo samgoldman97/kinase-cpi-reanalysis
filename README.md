@@ -12,16 +12,17 @@ This section reflects a set of notes summarizing changes to the code
         - Added new args, `use_uq`, `predict_flat` to decide when to use uq and when to predict flat objs.    
         - Added reshape to y   
 
-2. `bin/mlp_ensemble.py`: 
+2. `bin/mlp_ensemble.py`:   
         - Added split and normalize parameters for normalizing GP's and treating GP + split as different   
         - `remove_duplicates` function added to aid in splitting   
         - Add standard scaler to all input y values for fit    
         - allow MSE loss    
 
-3. `bin/plot_benchmark_cv.py`, `bin/plot_benchmark_lead.py`, `bin/plot_benchmark_lead_quad.py`: 
+3. `bin/plot_benchmark_cv.py`, `bin/plot_benchmark_lead.py`, `bin/plot_benchmark_lead_quad.py`, `bin/plot_reanalysis.py`:    
         - Added support for experiments in 2021   
         - Added new make figure tags for additional models   
         - Modified color palette   
+        - New file to plot reanalysis
 
 4. `bin/process_davis20111kinase.py`:   
         - Add flag for using morgan fingeprrints   
@@ -34,7 +35,7 @@ This section reflects a set of notes summarizing changes to the code
         - Add support for morgan fingerprint   
         - Add new models mlper1norm, mlper1normsklearn, ridgesplit, ridgesplit_morgan, gpsplit, hybridsplit, mlper1split,  
 
-7. `launcher_scripts/`:
+7. `launcher_scripts/`:    
         - Python scripts to run cv and exploit experiments  
         - Additional slurm script  
 
@@ -80,7 +81,7 @@ In exploitation, we test MLP + GP and MLP CPI models against ridge split regress
 
 #### Plotting results
 
-After generating results with the scripts above (see *Running experiments* section) in `target/log/` and `iterate/log/`,  results can be plotted using the notebook `notebook/make_figs.ipynb`. Alternatively, this can be accomplished 
+After generating results with the scripts above (see *Running experiments* section) in `target/log/` and `iterate/log/`,  results can be plotted using the notebook `notebook/make_figs.ipynb`. Alternatively, this can be accomplished by running the file `bin/plot_reanlaysis.py`
 
 ### Data
 
