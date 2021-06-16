@@ -49,6 +49,8 @@ plt.rcParams['ps.fonttype'] = 42
 method_name_map = {
     "mlper1": "MLP",
     "hybrid": "GP + MLP",
+    "hybridnorm": "GP + MLP (Norm)",
+    "mlper1norm": "MLP (Norm)",
     "ridgesplit": "Ridge: pretrained",
     "ridgesplit_morgan": "Ridge: Morgan",
     "hybridsplit": "GP + MLP",
@@ -172,14 +174,22 @@ def make_mlp_debug_plots():
     """Make cv plots """
 
 
-    models = ["mlper1", "mlper1split", "mlper1splitnorm", 
+    models = ["mlper1","mlper1norm", "mlper1split", "mlper1splitnorm", 
               "mlper1splitsklearn", "mlper1splitnormsklearn"]
+    method_name_map = {
+        "mlper1": "MLP Keras",
+        "mlper1norm": "MLP Norm Keras",
+        "mlper1split": "MLP Split Keras",
+        "mlper1splitnorm": "MLP Split Norm Keras",
+        "mlper1splitsklearn": "MLP Split Sklearn",
+        "mlper1splitnormsklearn": "MLP Split Norm Sklearn"
+    }
 
 
     panel_height = 3.5
     panel_width = 5.5
 
-    orig_models = ["mlper1"]
+    orig_models = ["mlper1", "mlper1norm"]
     no_cpi = ["mlper1split", "mlper1splitnorm", 
               "mlper1splitsklearn", "mlper1splitnormsklearn"]
     ours = []
@@ -320,27 +330,47 @@ def make_mlp_debug_plots():
             plt.close()
     return color_map
 
-def make_cv_plots():
+def make_cv_plots(use_controls=False):
     """Make cv plots """
-    models = [
-        'mlper1',
-        'hybrid',
-        'ridgesplit',
-        'ridgesplit_morgan',
-        'hybridsplit',
-        'mlper1split',
-    ]
-
     panel_height = 3.5
     panel_width = 5.5
 
-    orig_models = ["hybrid", "mlper1"]
-    no_cpi = ["hybridsplit", "mlper1split"]
-    ours = ["ridgesplit", "ridgesplit_morgan"]
+    if use_controls:
+        models = [
+            'mlper1',
+            "mlper1norm",
+            'hybrid',
+            'hybridnorm',
+            'ridgesplit',
+            'ridgesplit_morgan',
+            'hybridsplit',
+            'mlper1split',
+        ]
 
-    uq_methods = ["hybrid", "hybridsplit"]
+        orig_models = ["hybrid", "mlper1", 
+                       "hybridnorm", "mlper1norm"]
+        no_cpi = ["hybridsplit", "mlper1split"]
+        ours = ["ridgesplit", "ridgesplit_morgan"]
+
+        uq_methods = ["hybrid", "hybridsplit"]
+
+    else: 
+        models = [
+            'mlper1',
+            'hybrid',
+            'ridgesplit',
+            'ridgesplit_morgan',
+            'hybridsplit',
+            'mlper1split',
+        ]
+
+        orig_models = ["hybrid", "mlper1"]
+        no_cpi = ["hybridsplit", "mlper1split"]
+        ours = ["ridgesplit", "ridgesplit_morgan"]
+
+        uq_methods = ["hybrid", "hybridsplit"]
+
     joint_list = [orig_models, no_cpi, ours]
-
     full_list = [x for i in joint_list for x in i]
     gap_size = 0.3
     shift_factors = np.array(
@@ -463,8 +493,9 @@ def make_cv_plots():
             #         plt.legend(handles=bars, ncol=1,#int(len(full_list) / 2),# + 1),
             #                bbox_to_anchor = (1.5, 0.5),loc="center", )
 
+            prefix = "norm_" if use_controls else ""
             save_name = os.path.join(out_dir,
-                                     f'benchmark_cv_{metric}_{quadrant}.pdf')
+                                     f'{prefix}benchmark_cv_{metric}_{quadrant}.pdf')
 
             new_title = title_rename[quadrant]
             plt.title(new_title)
@@ -594,6 +625,7 @@ def make_exploit_plots(color_map, log_scale = False):
 
 if __name__ == "__main__":
     make_mlp_debug_plots()
+    make_cv_plots(use_controls=True)
     color_map = make_cv_plots()
     make_exploit_plots(color_map, log_scale = False)
     make_exploit_plots(color_map, log_scale = True)
