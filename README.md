@@ -50,8 +50,14 @@ We have added several models to this repository:
 3. `mlper1normsklearn`: An MLP model with standard normalized target values implemented in sklearn
 4. `ridgesplit_morgan`: Equivalent to `ridgesplit` but using Morgan FP's.
 5. `gpsplit`: Equivalent to `ridgesplit` but using gaussian processes
-6. `hybridsplit`: Equivalent to `ridgesplit` but using hybrid MLP and GP models
-7. `mlper1split`: Equivalent to `ridgesplit` but using an MLP model. By default, this is normalized as it uses an SKLearn implementation that gives poor predictions without normalization.
+6. `hybridsplit`: Equivalent to `ridgesplit` but using hybrid models without MLP normalization  
+7. `hybridsplitnorm`: Equivalent to `hybridsplit` but with normalization   
+8. `hybridnorm`: Equivalent to `hybrid` but with normalization   
+9. `hybridsplit`: Equivalent to `ridgesplit` but using hybrid MLP and GP models
+10. `mlper1split`: Equivalent to `ridgesplit` but using an MLP model with keras. 
+11. `mlper1splitnormsklearn`: Equivalent to `mlper1split` but using sklearn and normalization
+12. `mlper1splitsklearn`: Equivalent to `mlper1split` but using sklearn and no normalization
+13. `mlper1splitnorm`: Equivalent to `mlper1split` but using normalization
 
 
 #### Installation directions
@@ -68,7 +74,7 @@ Both benchmarking and exploitation experiments were run.
 
 CV experiments can be run directly using `launcher_scripts/run_cv.py` or `launcher_scripts/run_exploit.py` . These files rely on a slurm launch script, `generic_slurm.sh`. To run these commands locally, the `--local` can be used (i.e., `python launcher_scripts/run_cv.py --local`). This will generate logs for 5 different seeds of the experiments. 
 
-In cross validation, we test CPI models as originally implemented (MLP + GP, MLP), original models without CPI (MLP + GP split, MLP split), and logistic regression models without CPI (ridge split, ridge split without figures). 
+In cross validation, we test CPI models as originally implemented (MLP + GP, MLP), original models without CPI (MLP + GP split norm, MLP split norm), and logistic regression models without CPI (ridge split, ridge split without figures). We also additionally run experiments with (MLP + GP norm, MLP norm) to show that normalization is more helpful when training split models joint models. 
 
 In exploitation, we test MLP + GP and MLP CPI models against ridge split regression models.
 
